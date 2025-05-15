@@ -1,0 +1,53 @@
+Ton fichier **`/etc/monit/conf.d/postgresql.cfg`** contient plusieurs erreurs :  
+
+### 🚨 **Problèmes détectés**  
+1. **Fichier PID incorrect**  
+   - Tu utilises `/var/run/postgresql/9.4-main.pid`, mais tu as installé **PostgreSQL 14**, donc le bon fichier PID est probablement **`/var/run/postgresql/14-main.pid`**.  
+2. **Erreur de syntaxe sur `status`**  
+   - La condition `if status != 0 then restart` n'est pas valide.  
+   - Il faut utiliser `if failed` au lieu de `if status`.  
+
+---
+
+### ✅ **Correction du fichier `/etc/monit/conf.d/postgresql.cfg`**
+Remplace son contenu par :  
+
+```monit
+check process postgresql with pidfile "/var/run/postgresql/14-main.pid"
+  start program = "/bin/systemctl start postgresql"
+  stop program = "/bin/systemctl stop postgresql"
+  if failed port 5432 protocol pgsql then restart
+  if 5 restarts within 5 cycles then timeout
+```
+
+---
+
+### 🔄 **Étapes pour appliquer la correction**  
+
+1️⃣ **Modifie le fichier**  
+Exécute :  
+```bash
+sudo nano /etc/monit/conf.d/postgresql.cfg
+```
+➜ Modifie le contenu comme indiqué ci-dessus, **puis enregistre (`CTRL + X`, `Y`, ENTER`).**  
+
+2️⃣ **Vérifie la configuration Monit**  
+```bash
+sudo monit -t
+```
+✅ **Si tout est bon, tu devrais voir `Control file syntax OK`**  
+
+3️⃣ **Redémarre Monit**  
+```bash
+sudo systemctl restart monit
+sudo systemctl status monit
+```
+
+4️⃣ **Vérifie que Monit surveille PostgreSQL correctement**  
+```bash
+sudo monit summary
+```
+
+---
+
+Essaie ça et dis-moi si ça fonctionne ! 🚀

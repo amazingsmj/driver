@@ -1,0 +1,15 @@
+/assets
+/_includes
+/_layouts
+/.gitignore
+/node_modules
+/test
+*.log
+*.swp
+*~
+*.tgz
+/site
+*.user
+*.csproj
+*.sln
+*.nupkg

@@ -1,0 +1,8 @@
+---
+- name: Reload systemd
+  command: systemctl daemon-reexec
+
+- name: Restart Windshaft
+  service:
+    name: windshaft
+    state: restarted

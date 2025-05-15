@@ -1,0 +1,24 @@
+---
+
+# Installs packages/dependencies for database servers
+
+- hosts: all
+
+  pre_tasks:
+    - name: Gather EC2 facts
+      action: ec2_facts
+      when: staging
+
+- hosts: database-servers
+
+  become: True
+
+  pre_tasks:
+    - name: Add Docker APT key via curl
+      shell: "curl -sSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
+
+    - name: Update APT cache
+      apt: update_cache=yes
+
+  roles:
+    - { role: "driver.database" }

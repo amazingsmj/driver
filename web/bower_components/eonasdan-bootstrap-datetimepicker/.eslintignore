@@ -1,0 +1,7 @@
+**/dist/
+**/docs/
+**/coverage/
+**/.husky/
+**/types/
+**/build/
+**/test/

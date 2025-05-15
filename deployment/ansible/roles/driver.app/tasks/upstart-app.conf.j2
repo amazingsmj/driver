@@ -1,0 +1,15 @@
+description "DRIVER application"
+
+start on (local-filesystems and net-device-up)
+stop on shutdown
+
+respawn
+respawn limit 5 30
+
+script
+  /usr/bin/docker run --name driver-app -p 4000:4000 {{ docker_repository }}driver-app:{{ docker_image_tag }}
+end script
+
+pre-stop script
+  /usr/bin/docker stop driver-app
+end script

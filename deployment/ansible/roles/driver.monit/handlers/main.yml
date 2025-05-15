@@ -1,0 +1,6 @@
+---
+- name: Restart monit
+  systemd:
+    name: monit
+    state: restarted
+    daemon_reload: yes

@@ -1,0 +1,910 @@
+{
+  "openapi": "3.0.3",
+  "servers": [
+    {
+      "url": "https://api.pickpoint.io/v1"
+    }
+  ],
+  "info": {
+    "description": "This section is designed for developers working on applications and servers that integrate with the PickPoint geocoding platform. Before beginning to work with the API, it's necessary to create an account. For a quick overview of our services, please consult the Getting Started section. To begin experimenting, you simply need a tool capable of sending HTTP requests, which could be as simple as using your web browser's address bar. Additionally, you have access to GEO LAB from your account dashboard, which is another tool you can use for experimentation.\n<b> This section provides details about PickPoint API V1, which is now considered obsolete. For new users, it is recommended to consider using API V2, as it offers more advanced features and capabilities. However, for those who are currently utilizing this version of the API, rest assured that continued support will be provided. </b>",
+    "version": "v1",
+    "title": "PickPoint API",
+    "termsOfService": "https://pickpoint.io/terms-of-service",
+    "contact": {
+      "email": "support@pickpoint.io"
+    }
+  },
+  "tags": [
+    {
+      "name": "Geocoding",
+      "description": "<b>What is Geocoding?</b><br/> Geocoding involves converting a physical address into exact geographical coordinates, usually in terms of latitude and longitude. This process allows for the accurate pinpointing and depiction of a particular location on a map. Through transforming addresses into coordinates, geocoding aids in spatial analysis, mapping, and incorporating location-based data into diverse applications. <br/><br/>\n<b>How Does Geocoding Work?</b> <br/> Geocoding relies on a combination of address databases, reference data, and algorithms. Geocoding service takes an address as input and uses sophisticated algorithms to match it with known locations."
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/forward": {
+      "get": {
+        "tags": [
+          "Geocoding"
+        ],
+        "summary": "Forward Geocoding",
+        "description": "Forward geocoding involves translating addresses or place names into geographical coordinates, specifically latitude and longitude. This technique is commonly utilized in mapping and navigation software to accurately determine and display the precise location of a given address on a map.",
+        "operationId": "forward",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Free-form query string to search for. Commas are optional, but improve performance by reducing the complexity of the search. Don't use it if you request coordinates by country, city, street, county, postalcode, state.",
+            "examples": {
+              "county": {
+                "value": "Au Cap, Mahe"
+              },
+              "building": {
+                "value": "Great Russell St, London WC1B 3DG, United Kingdom"
+              }
+            },
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "street",
+            "in": "query",
+            "description": "Street",
+            "example": "131 Forest Ave",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "description": "City",
+            "example": "New York",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "county",
+            "in": "query",
+            "description": "County",
+            "example": "Staten Island",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "State",
+            "example": "NY",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Country",
+            "example": "USA",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "postalcode",
+            "in": "query",
+            "description": "Postal Code",
+            "example": "10301",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Format of response. By default JSON content will be returned.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "xml"
+              ]
+            }
+          },
+          {
+            "name": "addressdetails",
+            "in": "query",
+            "description": "Include a breakdown of the address into elements.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "extratags",
+            "in": "query",
+            "description": "Include additional information in the result if available, e.g. wikipedia link, opening hours.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "namedetails",
+            "in": "query",
+            "description": "Include a list of alternative names in the results. These may include language variants, references, operator and brand.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "query",
+            "description": "The preferred language order for displaying search results can be set to override the language specified in the <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language\">Accept-Language</a> HTTP header. This can be achieved either by using a standard RFC2616 accept-language string or by providing a straightforward comma-separated list of language codes.",
+            "example": "en",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countrycodes",
+            "in": "query",
+            "description": "To restrict search results to specific countries, use the <countrycodes> parameter, which should correspond to the <a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\">ISO 3166-1 alpha-2</a> code. For example, use `gb` for the United Kingdom or de for Germany.\nEach location is associated with a country code based on the country boundaries defined in OpenStreetMap (OSM). However, in rare instances, a place might not fall within any country's boundaries, such as locations in international waters.",
+            "example": "gb,us,ca",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "exclude_place_ids",
+            "in": "query",
+            "description": "To exclude specific OSM objects from your search results, provide a comma-separated list of the place_ids you wish to omit. This approach can be useful for obtaining additional search results. For instance, if an initial query yielded only a limited number of results, including those place_ids in the exclusion list will prompt the search to return alternative matches, which may be less precise, if available.",
+            "example": "186219712,117953627",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit the number of returned results",
+            "example": 10,
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 50
+            }
+          },
+          {
+            "name": "viewbox",
+            "in": "query",
+            "description": "The preferred area to find search results. Any two corner points of the box are accepted as long as they span a real box. `x` is longitude, `y` is latitude. Format: `<x1>,<y1>,<x2>,<y2>`",
+            "example": "0.0,52.0,1.0,53.0",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "minItems": 4,
+              "maxItems": 4,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "name": "bounded",
+            "in": "query",
+            "description": "When a 'viewbox' parameter is specified, the search results are limited to items located within the defined viewbox area. If both 'viewbox' and 'bounded'=1 parameters are set, the search is restricted exclusively to amenities. To search for a specific type of amenity, use the corresponding keyword enclosed in square brackets, such as [pharmacy]. This will return a range of objects of that particular type. However, it should be noted that there is no assurance of the completeness of the results.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_geojson",
+            "in": "query",
+            "description": "Output geometry of results as a GeoJSON. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_kml",
+            "in": "query",
+            "description": "Output geometry of results as a KML. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_svg",
+            "in": "query",
+            "description": "Output geometry of results as a SVG. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_text",
+            "in": "query",
+            "description": "Output geometry of results as a WKT. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_threshold",
+            "in": "query",
+            "description": "Return a simplified version of the output geometry. The parameter is the tolerance in degrees with which the geometry may differ from the original geometry. Topology is preserved in the result.",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ForwardResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/GeocodeErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedErrorResponse"
+          },
+          "402": {
+            "$ref": "#/components/responses/DailyLimitErrorResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/SubscriptionSuspendedErrorResponse"
+          }
+        }
+      }
+    },
+    "/reverse": {
+      "get": {
+        "tags": [
+          "Geocoding"
+        ],
+        "summary": "Reverse Geocoding",
+        "description": "Reverse geocoding is the technique of transforming geographic coordinates into a readable address or place name. It serves as the converse of forward geocoding, which turns addresses into geographic coordinates. This process is particularly useful in applications that require identifying specific location details from GPS coordinates.",
+        "operationId": "reverse",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Latitude",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "description": "Longitude",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Output format",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "xml"
+              ]
+            }
+          },
+          {
+            "name": "addressdetails",
+            "in": "query",
+            "description": "Include a breakdown of the address into elements.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "extratags",
+            "in": "query",
+            "description": "Include additional information in the result if available, e.g. wikipedia link, opening hours.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "namedetails",
+            "in": "query",
+            "description": "Include a list of alternative names in the results. These may include language variants, references, operator and brand.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "query",
+            "description": "Preferred language order for showing search results, overrides the value specified in the <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language\">Accept-Language</a> HTTP header. Either use a standard RFC2616 accept-language string or a simple comma-separated list of language codes.",
+            "example": "en",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "zoom",
+            "in": "query",
+            "description": "The required level of detail for the address is specified by a numerical value. The default setting is 18. This number approximately aligns with the zoom levels utilized in XYZ tile sources within frameworks such as Leaflet.js, OpenLayers, and others. The zoom levels correspond to varying degrees of address detail as follows:\n  * `3` - country\n  * `5` - state\n  * `8` - county\n  * `10` - city\n  * `14` - suburb\n  * `16` - major street\n  * `17` - any street\n  * `18` - building",
+            "example": 10,
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 18
+            }
+          },
+          {
+            "name": "polygon_geojson",
+            "in": "query",
+            "description": "Output geometry of results as a GeoJSON. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_kml",
+            "in": "query",
+            "description": "Output geometry of results as a KML. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_svg",
+            "in": "query",
+            "description": "Output geometry of results as a SVG. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_text",
+            "in": "query",
+            "description": "Output geometry of results as a WKT. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_threshold",
+            "in": "query",
+            "description": "Return a simplified version of the output geometry. The parameter is the tolerance in degrees with which the geometry may differ from the original geometry. Topology is preserved in the result.",
+            "required": false,
+            "example": 0,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ReverseResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/GeocodeErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedErrorResponse"
+          },
+          "402": {
+            "$ref": "#/components/responses/DailyLimitErrorResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/SubscriptionSuspendedErrorResponse"
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "get": {
+        "tags": [
+          "Geocoding"
+        ],
+        "summary": "Lookup",
+        "description": "The lookup API allows to query the address and other details of one or multiple OSM objects like node, way or relation.",
+        "operationId": "lookup",
+        "parameters": [
+          {
+            "name": "osm_ids",
+            "in": "query",
+            "description": "Comma-separated list of OSM ids each prefixed with its type, one of node(N), way(W) or relation(R). Up to 50 ids can be queried at the same time.",
+            "required": true,
+            "explode": false,
+            "example": "R146656,W104393803,N240109189",
+            "schema": {
+              "type": "array",
+              "minLength": 1,
+              "maxLength": 50,
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "addressdetails",
+            "in": "query",
+            "description": "Include a breakdown of the address into elements.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "extratags",
+            "in": "query",
+            "description": "Include additional information in the result if available, e.g. wikipedia link, opening hours.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "namedetails",
+            "in": "query",
+            "description": "Include a list of alternative names in the results. These may include language variants, references, operator and brand.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "query",
+            "description": "Preferred language order for showing search results, overrides the value specified in the <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language\">Accept-Language</a> HTTP header. Either use a standard RFC2616 accept-language string or a simple comma-separated list of language codes.",
+            "example": "en",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "polygon_geojson",
+            "in": "query",
+            "description": "Output geometry of results as a GeoJSON. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_kml",
+            "in": "query",
+            "description": "Output geometry of results as a KML. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_svg",
+            "in": "query",
+            "description": "Output geometry of results as a SVG. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_text",
+            "in": "query",
+            "description": "Output geometry of results as a WKT. Only one of `polygon_` options can be used at a time.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "polygon_threshold",
+            "in": "query",
+            "description": "Return a simplified version of the output geometry. The parameter is the tolerance in degrees with which the geometry may differ from the original geometry. Topology is preserved in the result.",
+            "required": false,
+            "example": 0,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ReverseResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/GeocodeErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedErrorResponse"
+          },
+          "402": {
+            "$ref": "#/components/responses/DailyLimitErrorResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/SubscriptionSuspendedErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      }
+    },
+    "responses": {
+      "ForwardResponse": {
+        "description": "Forward geocoding result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ForwardResult"
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "$ref": "#/components/schemas/ForwardResult"
+            }
+          }
+        }
+      },
+      "ReverseResponse": {
+        "description": "Reverse geocoding result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ReverseResult"
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "$ref": "#/components/schemas/ReverseResult"
+            }
+          }
+        }
+      },
+      "GeocodeErrorResponse": {
+        "description": "Incorrect request parameters.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "Error details.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedErrorResponse": {
+        "description": "API key is incorrect or not provided.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "Error details.",
+                  "type": "string",
+                  "default": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DailyLimitErrorResponse": {
+        "description": "Subscription daily limit exceeded.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "Error details.",
+                  "type": "string",
+                  "default": "Subscription limit exceeded."
+                }
+              }
+            }
+          }
+        }
+      },
+      "SubscriptionSuspendedErrorResponse": {
+        "description": "Subscription suspended.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "Error details.",
+                  "type": "string",
+                  "default": "Subscription suspended."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ReverseResult": {
+        "type": "object",
+        "properties": {
+          "place_id": {
+            "type": "string"
+          },
+          "licence": {
+            "type": "string"
+          },
+          "osm_type": {
+            "type": "string"
+          },
+          "osm_id": {
+            "type": "string"
+          },
+          "lat": {
+            "type": "string",
+            "description": "Latitude"
+          },
+          "lon": {
+            "type": "string",
+            "description": "Longitude"
+          },
+          "display_name": {
+            "description": "Place full name",
+            "type": "string"
+          },
+          "boundingbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        "xml": {
+          "name": "reversegeocode"
+        }
+      },
+      "ForwardResult": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "place_id": {
+              "type": "number"
+            },
+            "licence": {
+              "type": "string"
+            },
+            "osm_type": {
+              "type": "string"
+            },
+            "osm_id": {
+              "type": "number"
+            },
+            "lat": {
+              "type": "string",
+              "description": "Latitude"
+            },
+            "lon": {
+              "type": "string",
+              "description": "Longitude"
+            },
+            "display_name": {
+              "description": "Place full name",
+              "type": "string"
+            },
+            "class": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "importance": {
+              "type": "string"
+            },
+            "boundingbox": {
+              "$ref": "#/components/schemas/BoundingBox"
+            },
+            "address": {
+              "$ref": "#/components/schemas/Address"
+            }
+          }
+        },
+        "xml": {
+          "name": "searchresults"
+        }
+      },
+      "BoundingBox": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": {
+          "type": "string"
+        },
+        "xml": {
+          "name": "boundingbox"
+        }
+      },
+      "Address": {
+        "description": "Address details",
+        "type": "object",
+        "properties": {
+          "house_number": {
+            "type": "string"
+          },
+          "road": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "county": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "postcode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "country_code": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "address"
+        }
+      }
+    }
+  }
+}

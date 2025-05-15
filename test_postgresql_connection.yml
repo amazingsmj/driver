@@ -1,0 +1,13 @@
+---
+- name: Test PostgreSQL connection
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Test PostgreSQL connection
+      postgresql_db:
+        name: test_db
+        state: present
+        login_user: postgres
+        login_password: "{{ postgresql_password }}"
+        login_host: localhost
+        login_port: 5432

@@ -1,0 +1,42 @@
+{
+  "name": "ng-file-saver",
+  "version": "1.1.5",
+  "main": "dist/angular-file-saver.bundle.js",
+  "authors": [
+    "Philipp Alferov <philipp.alferov@gmail.com>"
+  ],
+  "maintainers": [
+    "Daniel Alvarez <elquimeras@gmail.com>"
+  ],
+  "description": "An AngularJS service that implements the HTML5 W3C saveAs() in browsers that do not natively support it",
+  "keywords": [
+    "filesaver",
+    "angular",
+    "saveas",
+    "blob",
+    "save",
+    "file"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "blob-polyfill": "~1.0.20150320",
+    "file-saver": "^2.0.4"
+  },
+  "homepage": "https://github.com/elquimeras/ng-file-saver",
+  "_release": "1.1.5",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.5",
+    "commit": "4ff4fe19f9a55b6e9810d2d2d29da037ecd4b48d"
+  },
+  "_source": "https://github.com/elquimeras/ng-file-saver.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/elquimeras/ng-file-saver.git"
+}

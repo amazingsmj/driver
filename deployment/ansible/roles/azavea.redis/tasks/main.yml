@@ -1,0 +1,11 @@
+---
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Install Redis
+  apt: pkg=redis-server state=present
+
+- name: Configure Redis
+  template: src=redis.conf.j2 dest=/etc/redis/redis.conf
+  notify:
+    - Restart Redis

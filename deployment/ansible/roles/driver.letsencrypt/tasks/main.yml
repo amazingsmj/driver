@@ -1,0 +1,56 @@
+---
+# Set up certificates on the machine using CertBot
+
+# Need to download certbot directly, since PPA no longer works
+# for this version of Ubuntu
+- name: Download certbot
+  get_url:
+    url: https://dl.eff.org/certbot-auto
+    dest: /usr/local/bin/certbot
+    mode: 0755
+
+- name: Install certbot dependencies
+  command: certbot --non-interactive --os-packages-only
+
+- name: Install certbot
+  command: certbot --non-interactive --install-only
+
+- name: Stop nginx
+  service:
+    name: nginx
+    state: stopped
+
+# The nginx role will assume that this cert exists when configuring.
+- name: Use CertBot to obtain certificate
+  command: certbot certonly --standalone -n --agree-tos --email {{ driver_admin_email }} --domains {{ allowed_host }}
+  args:
+    creates: "{{ letsencrypt_cert_root }}/fullchain.pem"
+
+# The existence of these files is assumed by the nginx role as well.
+# This isn't a great option, but it roughly approximates what the certbot-nginx code does:
+# these files are included directly in the python package and copied into place.
+# certbot-nginx got really confused by our nginx config, so this seemed like the easier route
+- name: Download CertBot nginx SSL config
+  get_url:
+    url: "{{ letsencrypt_options_ssl_nginx_url }}"
+    dest: "{{ letsencrypt_options_ssl_nginx_path }}"
+
+- name: Download CertBot Diffie-Hellman Params
+  get_url:
+    url: "{{ letsencrypt_dhparams_url }}"
+    dest: "{{ letsencrypt_dhparams_path }}"
+
+- name: Start nginx
+  service:
+    name: nginx
+    state: started
+
+# Copied from old azavea.letsencrypt role
+- name: Install cronjob for cert renewal
+  cron:
+    job: "certbot renew --pre-hook 'service nginx stop' --post-hook 'service nginx start'"
+    day: "1,11,21"
+    hour: 4
+    minute: 30
+    state: present
+    name: "letsencrypt certificate renewal"

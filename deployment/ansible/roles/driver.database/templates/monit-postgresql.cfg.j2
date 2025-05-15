@@ -1,0 +1,5 @@
+check process postgresql with pidfile "/var/run/postgresql/{{ postgresql_version }}-main.pid"
+  start program = "/bin/systemctl start postgresql >> /var/log/monit_postgresql_start.log 2>&1"
+  stop program = "/bin/systemctl stop postgresql >> /var/log/monit_postgresql_stop.log 2>&1"
+  if status != 0 then restart
+  

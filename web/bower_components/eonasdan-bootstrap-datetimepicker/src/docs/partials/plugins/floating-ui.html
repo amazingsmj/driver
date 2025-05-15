@@ -1,0 +1,37 @@
+<div id='page-body'>
+  <div class='row'>
+    <h3>Floating UI</h3>
+    <p>
+      By default, @popperJS/core is required for the popper to work correctly. Alternatively, we can remove popper and
+      use
+      <a href='https://github.com/floating-ui/floating-ui' target='_blank' rel='noopener'>FloatingUI</a> by creating a
+      plugin that handles the popup creation.
+    </p>
+  </div>
+
+  <div class='row'>
+    <pre>
+<code class='language-js'>
+import { computePosition } from '@floating-ui/dom';
+
+const datetimepicker1 = new tempusDominus.TempusDominus(document.getElementById(&#39;datetimepicker1&#39;));
+
+datetimepicker1.display.createPopup = computePosition(element, widget, options).then(({ x, y }) => {
+    Object.assign(widget.style, {
+      left: `${x}px`,
+      top: `${y}px`,
+      position: 'absolute',
+    });
+  });
+</code>
+    </pre>
+  </div>
+</div>
+
+<div id='page-meta'>
+  <div id='title'>Plugins - FloatingUI</div>
+  <div id='post-date'>09/13/2022</div>
+  <div id='update-date'>09/13/2022</div>
+  <div id='excerpt'>How to use FloatingUI plugin with Tempus Dominus.</div>
+  <div id='tags'>datepicker, javascript, open source, tempus dominus, eonasdan</div>
+</div>

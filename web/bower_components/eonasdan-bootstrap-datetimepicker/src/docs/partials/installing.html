@@ -1,0 +1,68 @@
+<div id="page-body">
+  <div class='row'>
+    <p>
+      No matter how you choose to get the files, make sure that Popper is include before the picker's main script file.
+    </p>
+    <p>
+      You will also want a font library. The picker defaults to Font Awesome 6, but you can provide a different icon set
+      via the configuration or a plugin.
+    </p>
+  </div>
+
+  <div class='row'>
+    <h2 id='cdn'>Via CDN</h2>
+    <pre>
+<code class='language-html'>&lt;!-- Popperjs --&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+&lt;!-- Tempus Dominus JavaScript --&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/js/tempus-dominus.min.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+
+&lt;!-- Tempus Dominus Styles --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/css/tempus-dominus.min.css&quot; crossorigin=&quot;anonymous&quot;&gt;</code>
+</pre>
+  </div>
+
+  <div class='row'>
+    <h2 id='npm'>Via NPM</h2>
+    <pre>
+<code class='language-batch'>npm install @popperjs/core @eonasdan/tempus-dominus</code>
+</pre>
+  </div>
+  <div class='row'>
+    <h2 id='compiled'>Compiled Code</h2>
+    <p>
+      You can grab the compiled js and css from <a href='https://github.com/Eonasdan/tempus-dominus/tree/master/dist'
+                                                   target='_blank' rel='noopener'>GitHub</a>
+    </p>
+    <p>You still need to get Popper yourself.</p>
+  </div>
+
+  <div class='row'>
+    <h2 id='nuget'>Nuget Package</h2>
+    <pre>
+<code class='language-powershell'>Install-Package TempusDominus
+#or the SCSS version if you prefer
+Install-Package TempusDominus.scss</code>
+    </pre>
+  </div>
+
+  <div id='subToc' class='d-none'>
+    <nav id='TableOfContents'>
+      <ul>
+        <li><a href='#content'>Overview</a></li>
+        <li><a href='#cdn'>CDN</a></li>
+        <li><a href='#npm'>NPM</a></li>
+        <li><a href='#compiled'>Compiled</a></li>
+        <li><a href='#nuget'>NuGet</a></li>
+      </ul>
+    </nav>
+  </div>
+
+</div>
+<div id="page-meta">
+  <div id="title">Download</div>
+  <div id="post-date">07/08/2021</div>
+  <div id="update-date">07/08/2021</div>
+  <div id="excerpt">How to install Tempus Dominus datetime picker.</div>
+  <div id="tags">datepicker, javascript, open source, tempus dominus, eonasdan</div>
+</div>

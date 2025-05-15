@@ -1,0 +1,116 @@
+<div id="page-body">
+  <div class='row'>
+    <h3>Introduction</h3>
+    <p>
+      Plugins allow you to extend the picker by adding new functionality to either Tempus Dominus globally,
+      a single picker or by overwriting existing functionality.
+    </p>
+  </div>
+
+  <div class='row'>
+    <h3 id='creating' class='mt-3'>Creating plugins</h3>
+    <p>
+      There are a few examples in the source like this
+    </p>
+    <pre>
+<code class='language-javascript'>export const load = (option, tdClasses, tdFactory) => {
+  // extend the picker
+  // e.g. add new tempusDominus.TempusDominus(...).someFunction()
+  tdClasses.TempusDominus.prototype.someFunction = (a, logger) => {
+    logger = logger || console.log
+    logger(a);
+  }
+
+  // extend tempusDominus
+  // e.g. add tempusDominus.example()
+  tdFactory.example = (a, logger) => {
+    logger = logger || console.log
+    logger(a);
+  }
+
+  // overriding existing API
+  // e.g. extend new tempusDominus.TempusDominus(...).show()
+  const oldShow = tdClasses.TempusDominus.prototype.show;
+  tdClasses.TempusDominus.prototype.show = function(a, logger) {
+    logger = logger || console.log
+    alert('from plugin');
+    logger(a);
+    oldShow.bind(this)()
+    // return modified result
+  }
+}</code>
+    </pre>
+  </div>
+
+  <div class='row'>
+    <h2 id='using'>Using a plugin</h2>
+    <h3 class='mt-3'>Globally</h3>
+    <p>
+      Using a plugin is easy. Load the plugin script file after you load Tempus Dominus
+    </p>
+    <pre>
+<code class='language-html'>&lt;script src=&quot;/path/to/plugin.js&quot;&gt;&lt;/script&gt;</code>
+<code class='language-js'>tempusDominus.extend(window.tempusDominus.plugins.PLUGINNAME);</code>
+    </pre>
+
+    <p>
+      You can also use import the plugins instead.
+    </p>
+    <pre>
+<code class='language-js'>import { TempusDominus, version, extend } from '@eonasdan/tempus-dominus'; //require also works
+import sample from '@eonasdan/tempus-dominus/dist/plugins/examples/sample';
+
+extend(sample); // use plugin</code>
+    </pre>
+
+    <h3 class='mt-3'>Per instance</h3>
+    <p>
+      Plugins can also be loaded per picker.
+    </p>
+
+    <pre>
+<code class='language-javascript'>const picker = new tempusdominus
+    .TempusDominus(document.getElementById('datetimepicker1'));
+
+picker.extend(sample);
+</code>
+</pre>
+  </div>
+
+  <div class='row'>
+    <h2 id='perPicker'>Per Instance Overwrites</h2>
+    <p>
+      It is possible to overwrite specific functions per picker instances as well. For instance:
+    </p>
+    <pre>
+<code class='language-js'>const td = new tempusDominus
+  .TempusDominus(document.getElementById('datetimepicker1'));
+
+td.dates.formatInput = function(date) { {return moment(date).format('MM/DD/YYYY') } }</code>
+</pre>
+    <p>
+      The code above would affect a single picker but not globally. You could easily adapt this code to
+      have a common formatting function taking in a format string.
+    </p>
+  </div>
+
+  <div id='subToc' class='d-none'>
+    <nav id='TableOfContents'>
+      <ul>
+        <li><a href='#content'>Overview</a></li>
+        <li><a href='#creating'>Creating</a></li>
+        <li><a href='#using'>Using</a></li>
+        <li><a href='#perPicker'>Per Picker</a></li>
+      </ul>
+    </nav>
+  </div>
+
+</div>
+
+<div id="page-meta">
+  <div id="title">Plugins</div>
+  <div id="post-date">01/19/2022</div>
+  <div id="update-date">02/05/2022</div>
+  <div id="excerpt">How to use plugins with Tempus Dominus.</div>
+  <div id="tags">datepicker, javascript, open source, tempus dominus, eonasdan</div>
+</div>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>TempusDominus</id>
+        <version>6.10.1</version>
+        <title>Tempus Dominus</title>
+        <authors>Eonasdan</authors>
+        <owners>Eonasdan</owners>
+        <summary>Tempus Dominus css and javascript</summary>
+        <projectUrl>https://github.com/Eonasdan/tempus-dominus</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Powerful and robust date and time picker</description>
+        <readme>README.md</readme>
+        <releaseNotes>https://getdatepicker.com/6/change-log.html</releaseNotes>
+        <tags>date time picker datetimepicker datepicker</tags>
+        <icon>td.png</icon>
+        <licenseUrl>https://github.com/Eonasdan/tempus-dominus/blob/master/LICENSE</licenseUrl>
+        <copyright>Copyright 2013-2022</copyright>
+        <contentFiles>
+            <files include="**/*" buildAction="Content" />
+        </contentFiles>
+    </metadata>
+	<files>
+        <file src="..\..\README.md" target="" />
+        <file src="td.png" target="" />
+
+        <file src="..\..\dist\css\*.*" target="content\Content" />
+        <file src="..\..\dist\js\*.*" target="content\Content" />
+
+        <file src="..\..\dist\css\*.*" target="contentFiles\any\any\wwwroot\css" />
+        <file src="..\..\dist\js\*.*" target="contentFiles\any\any\wwwroot\js" />
+    </files>
+</package>

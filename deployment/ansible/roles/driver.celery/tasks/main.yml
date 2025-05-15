@@ -1,0 +1,68 @@
+---
+- name: Build application Docker image
+  command: >
+    docker build
+      -f {{ root_app_dir }}/Dockerfile.base
+      -t driver-app:{{ docker_image_tag }}
+      {{ root_app_dir }}
+  when: developing
+
+- name: Build application Docker image (dev tools)
+  command: >
+    docker build
+      -f {{ root_app_dir }}/Dockerfile.development
+      -t driver-app:{{ docker_image_tag }}
+      {{ root_app_dir }}
+  when: developing
+
+- name: Pull application Docker image
+  command: /usr/bin/docker pull {{ docker_repository }}driver-app:{{ docker_image_tag}}
+  when: staging or production
+
+- name: Configure DRIVER Celery service definition
+  template: src=upstart-celery.conf.j2 dest=/etc/init/driver-celery.conf
+
+- name: Restart DRIVER Celery service
+  service: name=driver-celery state=restarted
+
+- name: Restart DRIVER Gradle service
+  service: name=driver-gradle state=restarted
+
+- name: Set up monit monitoring of driver-celery container
+  template: src=monit-driver-celery.cfg.j2 dest=/etc/monit/conf.d/driver-celery.cfg
+  notify:
+    - Restart monit
+
+- name: Create a directory for scheduled task logs
+  file: path={{ driver_cron_log_dir }} state=directory
+
+- name: Add black spot calculation cronjob
+  when: web_js_blackspots_visible
+  cron: name="black spot calculation"
+        job="/usr/local/bin/heimdall
+        --database '{{ heimdall_db_connection }}'
+        --namespace records
+        --name calculate_black_spots
+        --timeout 7200
+        docker exec $(docker ps -q -f name=driver-celery) ./manage.py calculate_black_spots
+        >> {{ driver_cron_log_dir }}/calculate_black_spots.log 2>&1"
+        hour=19 minute=10  # 3:10am in UTC+8
+
+- name: Add find duplicate records cronjob
+  cron: name="find duplicate records"
+        job="/usr/local/bin/heimdall
+        --database '{{ heimdall_db_connection }}'
+        --namespace records
+        --name find_duplicates
+        --timeout 300
+        docker exec $(docker ps -q -f name=driver-celery) ./manage.py find_duplicate_records
+        >> {{ driver_cron_log_dir }}/find_duplicates.log 2>&1"
+        hour=17 minute=10  # 1:10am in UTC+8
+
+- name: Clean up CSV export files cronjob
+  cron: name="export file cleanup"
+        job="docker exec $(docker ps -q -f name=driver-celery) ./manage.py remove_old_exports
+        >> {{ driver_cron_log_dir }}/remove_old_exports.log 2>&1"
+        minute=10
+
+- { include: firewall.yml }

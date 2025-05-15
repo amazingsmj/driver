@@ -1,0 +1,12 @@
+[Unit]
+Description=DRIVER application
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run --name driver-app -p 4000:4000 {{ docker_repository }}driver-app:{{ docker_image_tag }}
+ExecStop=/usr/bin/docker stop driver-app
+
+[Install]
+WantedBy=multi-user.target

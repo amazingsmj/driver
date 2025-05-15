@@ -1,0 +1,6 @@
+Importation 01 : python load_incidents_v3.py --authz 'Token 20ec3e4cea81904167cb71e45d0604bfca643fd4' sample_data
+Importation 02 : python load_black_spots.py --authz 'Token f60fe9495017d9dc789a30be119bf844566e62d2' sample_data/black_spots.json
+Importation 03 : python load_interventions.py --authz 'Token f60fe9495017d9dc789a30be119bf844566e62d2' sample_data/interventions_sample_pts.geojson
+
+
+Command : bash Miniconda2.sh

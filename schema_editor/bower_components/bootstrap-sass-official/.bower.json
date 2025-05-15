@@ -1,0 +1,43 @@
+{
+  "name": "bootstrap-sass",
+  "homepage": "https://github.com/twbs/bootstrap-sass",
+  "authors": [
+    "Thomas McDonald",
+    "Tristan Harward",
+    "Peter Gumeson",
+    "Gleb Mazovetskiy"
+  ],
+  "description": "bootstrap-sass is a Sass-powered version of Bootstrap 3, ready to drop right into your Sass powered applications.",
+  "moduleType": "globals",
+  "main": [
+    "assets/stylesheets/_bootstrap.scss",
+    "assets/javascripts/bootstrap.js"
+  ],
+  "keywords": [
+    "twbs",
+    "bootstrap",
+    "sass"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "lib",
+    "tasks",
+    "templates",
+    "test",
+    "*.gemspec",
+    "Rakefile",
+    "Gemfile"
+  ],
+  "dependencies": {
+    "jquery": "1.9.1 - 2"
+  },
+  "_release": "02c6138862",
+  "_resolution": {
+    "type": "commit",
+    "commit": "02c61388626f6942a8bcbb2129866a976b093acb"
+  },
+  "_source": "https://github.com/twbs/bootstrap-sass.git",
+  "_target": "02c61388626f6942a8bcbb2129866a976b093acb",
+  "_originalSource": "twbs/bootstrap-sass"
+}

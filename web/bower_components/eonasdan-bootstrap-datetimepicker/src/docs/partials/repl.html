@@ -1,0 +1,262 @@
+<div id="page-body">
+  <div id='embed'></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@stackblitz/sdk@1.9.0/bundles/sdk.umd.js" integrity="sha256-YRwJRKMWZ1RpAGrke6zzS2ZZmPFGqsB6o9eTNpeF9KA=" crossorigin="anonymous"></script>
+  <script src='https://cdn.jsdelivr.net/npm/@eonasdan/lz-string@1.0.3/dist/lz-string.min.js'
+          integrity='sha256-mu6oqL9lqHnCZ7uliJ0+a0z2VcMuzS7JgqZqV1jheTM=' crossorigin='anonymous'></script>
+  <script src="https://cdn.jsdelivr.net/npm/prettier@2.8.7/standalone.js" integrity="sha256-0szozow+nJCuZKS0rL5ZOayUJ8/uoo57QZTyOdH8SBk=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prettier@2.8.7/parser-babel.js" integrity="sha256-a5LgZia05/mWM+e3hPjD1uZP4K4ZkR1hvAOZbv1QWrE=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prettier@2.8.7/parser-html.js" integrity="sha256-T1puTit6YYp6go4c5z9FHvY8k3EeKQYyI7glBZ2qprI=" crossorigin="anonymous"></script>
+  <script defer>
+    /* global prettier, lzString, StackBlitzSDK, prettierPlugins */
+
+    /**
+     * Code hash object
+     * @typedef {Object} Code-Hash
+     * @property {string} js - JS code for the VM.
+     * @property {string} html - HTML code for the VM.
+     * @property {boolean} jsConfigOnly - If this is true, then look at the JS snapshot and only update the config.
+     * @property {string} htmlNote - If this is true, then look at the JS snapshot and only update the config.
+     */
+
+    const sdk = StackBlitzSDK;
+    const targetJs = 'example.js';
+    const targetHtml = 'index.html';
+    let replData = {};
+
+    class Repl {
+      projectId = 'tempus-dominus-v6-repl';
+      vm = undefined;
+      originalJs = undefined;
+      originalHtml = undefined;
+
+      prettify(code, parser) {
+        return prettier.format(code, {
+          parser: parser,
+          plugins: prettierPlugins,
+          singleQuote: true,
+          tabWidth: 2,
+          htmlWhitespaceSensitivity: 'ignore'
+        });
+      }
+
+      /**
+       *
+       * @return Code-Hash
+       */
+      getQueryCode() {
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+          get: (searchParams, prop) => searchParams.get(prop.toString())
+        });
+
+        let value = (params.code || window.location.hash).replace('#code/', '');
+
+        if (!value) return { js: '', html: '', jsConfigOnly: false, htmlNote: '' };
+
+        try {
+          return JSON.parse(lzString.decompressFromURL(value));
+        } catch {
+          return { js: '', html: '', jsConfigOnly: false, htmlNote: '' };
+        }
+      }
+
+      htmlToElement(html) {
+        const template = document.createElement('template');
+        // Never return a text node of whitespace as the result
+        template.innerHTML = html.trim();
+        return template.content.firstChild;
+      }
+
+      async ready() {
+        this.snapshot = await this.vm.getFsSnapshot();
+        this.originalJs = this.snapshot[targetJs];
+        this.originalHtml = this.htmlToElement(this.snapshot[targetHtml]);
+
+        await this.updateVmAsync();
+      }
+
+      async updateVmAsync(code = '') {
+        if (!code) code = this.getQueryCode();
+        else code = JSON.parse(lzString.decompressFromURL(code));
+
+        if (!code.js && !code.html) return;
+
+        const delta = {
+          create: {},
+          destroy: []
+        };
+
+        if (code.js) {
+          if (code.jsConfigOnly) {
+            delta.create[targetJs] = this.originalJs.replace('//put your config here', code.js);
+          } else delta.create[targetJs] = this.prettify(code.js, 'babel');
+        }
+        if (code.html || code.htmlNote) {
+          const newHtml = this.originalHtml.cloneNode(true);
+          if (code.html) newHtml.querySelector('#htmlTarget').innerHTML = code.html;
+          newHtml.querySelector('#noteTarget').innerHTML = code.htmlNote;
+          delta.create[targetHtml] = this.prettify(newHtml.outerHTML, 'html');
+        }
+
+        await this.vm.applyFsDiff(delta);
+        console.clear();
+      }
+
+      async resetVmAsync() {
+        const delta = {
+          create: {},
+          destroy: []
+        };
+        delta.create[targetJs] = this.originalJs;
+        delta.create[targetHtml] = this.originalHtml.outerHTML;
+
+        await this.vm.applyFsDiff(delta);
+        console.clear();
+      }
+    }
+
+    const repl = new Repl();
+
+    const updateRepl = (name) => {
+      const hash = replData[name];
+
+      const url = new URL(window.location);
+      url.hash = `#code/${hash}`;
+      window.history.pushState({}, '', url);
+      repl.updateVmAsync(hash).then();
+    };
+
+    const resetRepl = () => {
+      repl.resetVmAsync().then();
+
+      const url = new URL(window.location);
+      url.hash = ``;
+      window.history.pushState({}, '', url);
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      replData = await (await fetch('/6/repl-data.json')).json();
+
+      repl.vm = await sdk
+        .embedProjectId('embed', repl.projectId, {
+          openFile: `${targetHtml},${targetJs}`,
+          hideNavigation: true,
+          settings: {
+            compile: { action: 'refresh' }
+          }
+        });
+      setTimeout(async () => {
+        await repl.ready();
+      }, 2000);
+
+      const mainToc = document.getElementById('mainToc');
+      mainToc.innerHTML = document.getElementById('replToc').innerHTML;
+      mainToc.style.display = 'block';
+    });
+  </script>
+  <style>
+      .bd-intro, #mainToc {
+          display: none;
+      }
+
+      #outerContainer {
+          max-width: 90vw !important;
+      }
+
+      #embed {
+          height: 80vh;
+      }
+
+      @media (min-width: 992px) {
+          .bd-layout {
+              grid-template-columns: 1fr 10fr;
+          }
+
+          .bd-main {
+              grid-template-areas:
+        "content";
+              grid-template-columns: 4fr;
+              grid-template-rows: auto 1fr;
+          }
+      }
+  </style>
+
+  <div id='replToc' style='display: none;'>
+    <li class='mb-1'>
+      <strong>
+        Examples
+      </strong>
+      <ul class='list-unstyled fw-normal pb-1 small'>
+        <li><a href='javascript:resetRepl()' class='d-inline-flex align-items-center rounded'>Simple</a>
+        </li>
+
+        <li><a
+          href='javascript:updateRepl("iconOnly")'
+          class='d-inline-flex align-items-center rounded'>Icon Only</a>
+        </li>
+
+        <li><a
+          href='javascript:updateRepl("sideBySide")'
+          class='d-inline-flex align-items-center rounded' aria-current='page'>Side By Side</a></li>
+
+        <li><a
+          href='javascript:updateRepl("localization")'
+          class='d-inline-flex align-items-center rounded' aria-current='page'>Localization</a></li>
+
+        <li><a href='javascript:updateRepl("timeOnly")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Time Only</a></li>
+
+        <li><a href='javascript:updateRepl("inputOnly")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Input Only</a></li>
+
+        <li><a href='javascript:updateRepl("enabledDates")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Enabled/Disabled Dates</a></li>
+
+        <li><a href='javascript:updateRepl("linkedPickers")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Linked Pickers</a></li>
+
+        <li><a href='javascript:updateRepl("customIcons")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Custom Icons</a></li>
+
+        <li><a href='javascript:updateRepl("viewMode")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>View Mode</a></li>
+
+        <li><a href='javascript:updateRepl("disableWeekday")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Disabled Days of the Week</a></li>
+
+        <li><a href='javascript:updateRepl("inline")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Inline</a></li>
+
+        <li><a href='javascript:updateRepl("theme")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Theme</a></li>
+
+        <li><a href='javascript:updateRepl("multipleDates")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Multiple Dates</a></li>
+
+        <li><a href='javascript:updateRepl("updateOptions")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Update Options</a></li>
+
+        <li><a href='javascript:updateRepl("parentContainer")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Parent Container</a></li>
+
+        <li><a href='javascript:updateRepl("functions")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Functions</a></li>
+
+        <li><a href='javascript:updateRepl("plugins")'
+               class='d-inline-flex align-items-center rounded' aria-current='page'>Plugins</a></li>
+
+<!--        <li><a href='javascript:updateRepl("")'-->
+<!--               class='d-inline-flex align-items-center rounded' aria-current='page'></a></li>-->
+      </ul>
+    </li>
+  </div>
+
+</div>
+
+<div id="page-meta">
+  <div id="title">REPL</div>
+  <div id="post-date">07/08/2021</div>
+  <div id="update-date">07/08/2021</div>
+  <div id="excerpt">How to use Tempus Dominus datetime picker</div>
+  <div id="tags">datepicker, javascript, open source, tempus dominus, eonasdan</div>
+</div>

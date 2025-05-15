@@ -1,0 +1,37 @@
+{
+  "name": "json-editor",
+  "authors": [
+    "Jeremy Dorn <jeremy@jeremydorn.com>"
+  ],
+  "description": "JSON Schema based editor",
+  "main": "dist/jsoneditor.js",
+  "keywords": [
+    "json",
+    "schema",
+    "jsonschema",
+    "editor"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "*.md",
+    "tests",
+    "examples",
+    "demo.html",
+    "*.png",
+    "package.json",
+    "Gruntfile.js",
+    "src"
+  ],
+  "homepage": "https://github.com/azavea/json-editor",
+  "version": "10.7.29",
+  "_release": "10.7.29",
+  "_resolution": {
+    "type": "version",
+    "tag": "v10.7.29",
+    "commit": "b44361273567fce38ae81f0f28700b334ad35a85"
+  },
+  "_source": "https://github.com/azavea/json-editor.git",
+  "_target": "v10.7.29",
+  "_originalSource": "azavea/json-editor"
+}

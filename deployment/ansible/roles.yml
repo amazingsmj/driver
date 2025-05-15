@@ -1,0 +1,16 @@
+- src: azavea.python-security
+  version: 0.1.0
+- src: azavea.postgresql
+  version: 0.3.4
+- src: azavea.postgresql-support
+  version: 0.3.0
+- src: azavea.postgis
+  version: 0.3.0
+- src: azavea.nginx
+  version: 0.2.1
+- src: azavea.docker
+  version: 4.0.0
+- src: azavea.pip
+  version: 1.0.1
+- src: azavea.redis
+  version: 0.1.0

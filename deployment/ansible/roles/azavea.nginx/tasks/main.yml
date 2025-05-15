@@ -1,0 +1,67 @@
+---
+- name: Add Docker's official GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker's stable repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    update_cache: yes
+
+- name: Install Nginx from Ubuntu repositories
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Delete default site (if needed)
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  register: delete_default_site
+  when: nginx_delete_default_site | bool
+  notify:
+    - Restart Nginx
+
+- name: Delete default web root (if needed)
+  file:
+    path: /var/www/html
+    state: absent
+  when: nginx_delete_default_site | bool and delete_default_site.changed
+
+- name: Check Nginx service file exists (using systemd)
+  stat:
+    path: /lib/systemd/system/nginx.service
+  register: nginx_systemd
+
+- name: Check Nginx Upstart service definition exists
+  stat:
+    path: /etc/init/nginx.conf
+  register: nginx_upstart
+
+- name: Configure Nginx log rotation (systemd)
+  template:
+    src: logrotate_nginx.j2
+    dest: /etc/logrotate.d/nginx
+  when: nginx_systemd.stat.exists
+
+- name: Configure Nginx log rotation (Upstart)
+  template:
+    src: logrotate_nginx.j2
+    dest: /etc/logrotate.d/nginx
+  when: nginx_upstart.stat.exists
+
+- name: Configure Nginx
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - Restart Nginx
+
+- name: Ensure Nginx is running and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes
